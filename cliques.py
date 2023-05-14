@@ -2,7 +2,7 @@ import os
 import requests
 from urllib.parse import urlparse
 from dotenv import load_dotenv
-from pprint import pprint
+
 
 load_dotenv()
 
@@ -24,9 +24,9 @@ def count_clicks(url_count_clincks, token, sum_clicks=0):
     """Количество кликов по ссылке"""
     response = requests.get(url_count_clincks, headers=token)
     response.raise_for_status()
-    clicks = response.json()['link_clicks']
+    clicks = response.json()["link_clicks"]
     for click in clicks:
-        sum_clicks += click['clicks']
+        sum_clicks += click["clicks"]
     return sum_clicks
 
 
@@ -49,7 +49,7 @@ def main():
     url_shorten_link = 'https://api-ssl.bitly.com/v4/shorten'
     url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks'
     url_is_bitlink = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}'
-    pprint(is_bitlink(url_is_bitlink, url_shorten_link, url_count_clincks, token))
+    print(is_bitlink(url_is_bitlink, url_shorten_link, url_count_clincks, token))
 
 
 if __name__ == '__main__':
