@@ -4,8 +4,9 @@ from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 
-def shorten_link(url_shorten_link, token, href):
+def shorten_link(token, href):
     """Сокращение ссылки"""
+    url_shorten_link = 'https://api-ssl.bitly.com/v4/shorten'
     body = {
         "long_url": href,
     }
@@ -31,16 +32,18 @@ def is_bitlink(url_is_bitlink, token):
 def main():
     load_dotenv()
     href = input('Введите ссылку:')
+
     token = {'Authorization': f'Bearer {os.environ["TOKEN_BITLY"]}'}
     href_without_http = urlparse(href)._replace(scheme="").geturl()
-    url_shorten_link = 'https://api-ssl.bitly.com/v4/shorten'
+
     url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks/summary'
     url_is_bitlink = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}'
+
     if is_bitlink(url_is_bitlink, token):
         clicks_count = count_clicks(url_count_clincks, token)
         return f'Количетво кликов: {clicks_count}'
     try:
-        bitlink = shorten_link(url_shorten_link, token, href)
+        bitlink = shorten_link(token, href)
         return f'Битлинк: {bitlink}'
     except requests.exceptions.HTTPError:
         raise 'Некорректная ссылка'
