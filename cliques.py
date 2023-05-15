@@ -40,7 +40,7 @@ def is_bitlink(url_is_bitlink, url_shorten_link, url_count_clincks, token):
 def main():
     load_dotenv()
     href = input('Введите ссылку:')
-    token = {'Authorization': f'Bearer {os.environ["TOKEN"]}'}
+    token = {'Authorization': f'Bearer {os.environ["TOKEN_BITLY"]}'}
     href_without_http = urlparse(href)._replace(scheme="").geturl()
     url_shorten_link = 'https://api-ssl.bitly.com/v4/shorten'
     url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks'
