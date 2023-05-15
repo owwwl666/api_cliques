@@ -3,6 +3,7 @@ import requests
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 
+
 def shorten_link(url_shorten_link, token, href):
     """Сокращение ссылки"""
     body = {
@@ -24,17 +25,10 @@ def count_clicks(url_count_clincks, token, sum_clicks=0):
     return sum_clicks
 
 
-def is_bitlink(url_is_bitlink, url_shorten_link, url_count_clincks, token):
+def is_bitlink(url_is_bitlink, token):
     """Проверка ссылки на сокращенность"""
     response = requests.get(url_is_bitlink, headers=token)
-    if response.ok:
-        clicks_count = count_clicks(url_count_clincks, token)
-        return f'Количетво кликов: {clicks_count}'
-    try:
-        bitlink = shorten_link(url_shorten_link, token, href)
-        return f'Битлинк: {bitlink}'
-    except requests.exceptions.HTTPError:
-        raise 'Некорректная ссылка'
+    return response.ok
 
 
 def main():
@@ -45,8 +39,15 @@ def main():
     url_shorten_link = 'https://api-ssl.bitly.com/v4/shorten'
     url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks'
     url_is_bitlink = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}'
-    print(is_bitlink(url_is_bitlink, url_shorten_link, url_count_clincks, token))
+    if is_bitlink(url_is_bitlink, token):
+        clicks_count = count_clicks(url_count_clincks, token)
+        return f'Количетво кликов: {clicks_count}'
+    try:
+        bitlink = shorten_link(url_shorten_link, token, href)
+        return f'Битлинк: {bitlink}'
+    except requests.exceptions.HTTPError:
+        raise 'Некорректная ссылка'
 
 
 if __name__ == '__main__':
-    main()
+    print(main())
