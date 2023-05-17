@@ -35,16 +35,16 @@ def main():
     href = input('Введите ссылку:')
     href_without_http = urlparse(href)._replace(scheme="").geturl()
 
-    TOKEN_BITLY = {'Authorization': f'Bearer {os.environ["TOKEN_BITLY"]}'}
+    token_bitly = {'Authorization': f'Bearer {os.environ["TOKEN_BITLY"]}'}
 
     url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks/summary'
     url_is_bitlink = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}'
 
-    if is_bitlink(url_is_bitlink, TOKEN_BITLY):
-        clicks_count = count_clicks(url_count_clincks, TOKEN_BITLY)
+    if is_bitlink(url_is_bitlink, token_bitly):
+        clicks_count = count_clicks(url_count_clincks, token_bitly)
         return f'Количетво кликов: {clicks_count}'
     try:
-        bitlink = shorten_link(TOKEN_BITLY, href)
+        bitlink = shorten_link(token_bitly, href)
         return f'Битлинк: {bitlink}'
     except requests.exceptions.HTTPError:
         raise 'Некорректная ссылка'
