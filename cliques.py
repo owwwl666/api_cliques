@@ -1,4 +1,5 @@
 import os
+import argparse
 from dotenv import load_dotenv
 import requests
 from urllib.parse import urlparse
@@ -32,7 +33,11 @@ def is_bitlink(url_is_bitlink, request_header):
 def main():
     load_dotenv()
 
-    href = input('Введите ссылку:')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('link_for_bitly')
+    args = parser.parse_args()
+
+    href = args.link_for_bitly
     href_without_http = urlparse(href)._replace(scheme="").geturl()
 
     request_header = {'Authorization': f'Bearer {os.environ["TOKEN_BITLY"]}'}
