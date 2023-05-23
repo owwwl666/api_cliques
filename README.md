@@ -8,7 +8,7 @@
 - Мы добавили его в файл `.env`, предварительно установив модуль [python-dotenv](https://pypi.org/project/python-dotenv/)
 - В `.env` указали ключ-значение
   `TOKEN_BITLY=e62f9766890632d27a4c4d300432cc2a9928b8be`
-- Импортируем в скрипте `cliques.py`
+- Импортируем в скрипте `main.py`
   ```
   import os
   from dotenv import load_dotenv
@@ -18,11 +18,12 @@
  - Изменить значение токена по ключу:
   `os.environ["TOKEN_BITLY"] = "NEW VALUE"`
   # Реализация проекта
-  Реализация в файле `cliques.py`. Все необходимые операции с URL, которые проводились в скрипте, описаны в [документации](https://gist.github.com/dvmn-tasks/58f5fdf7b8eb61ea4ed1b528b74d1ab5#GetClicks)
+  Реализация в файле `main.py`. Заметим,что мы не вводили ссылку в консоль с помощью функции `input()` для дальнейшего ее преобразования, а передавали ее как позиционный аргумент в командную строку, используя стандартную библиотеку [argparse](https://slides.dvmn.org/argparse/#/) .Все необходимые операции с URL, которые проводились в скрипте, описаны в [документации](https://gist.github.com/dvmn-tasks/58f5fdf7b8eb61ea4ed1b528b74d1ab5#GetClicks)
   - `pip install NamePackege` -> установка необходимых пакетов из `requirements.txt`.
   - Импорт библиотек
     ```
     import os
+    import argparse
     from dotenv import load_dotenv
     import requests
     from urllib.parse import urlparse
@@ -47,23 +48,29 @@
     def main():
       load_dotenv()
 
-      href = input('Введите ссылку:')
-      href_without_http = urlparse(href)._replace(scheme="").geturl() #убираем название протокала из ссылки
+      parser = argparse.ArgumentParser()
+      parser.add_argument('link_for_bitly')
+      args = parser.parse_args()
 
-      TOKEN_BITLY = {'Authorization': f'Bearer {os.environ["TOKEN_BITLY"]}'} # объявляем токен для доступа к API bitly
+      href = args.link_for_bitly
+      href_without_http = urlparse(href)._replace(scheme="").geturl()
 
-      url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks/summary' # полная ссылка для подсчета переходов по сслылке
-      url_is_bitlink = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}'# полная ссылка для сокращения адреса url
-      
-      if is_bitlink(url_is_bitlink, TOKEN_BITLY): # если ссылка уже сокращенная, то возвращаем количество переходов по ней
-        clicks_count = count_clicks(url_count_clincks, TOKEN_BITLY)
-        return f'Количетво кликов: {clicks_count}'
-      try: # пытаемся сократить сслыку
-        bitlink = shorten_link(TOKEN_BITLY, href)
-        return f'Битлинк: {bitlink}'
-      except requests.exceptions.HTTPError: # возбуждаем исключение
-        raise 'Некорректная ссылка'
-      
+      request_header = {'Authorization': f'Bearer {os.environ["TOKEN_BITLY"]}'}
+
+      url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks/summary'
+      url_is_bitlink = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}'
+
+      if is_bitlink(url_is_bitlink, request_header):
+          clicks_count = count_clicks(url_count_clincks, request_header)
+          return f'Количетво кликов: {clicks_count}'
+      try:
+          bitlink = shorten_link(request_header, href)
+          return f'Битлинк: {bitlink}'
+      except requests.exceptions.HTTPError:
+          raise 'Некорректная ссылка'
+          
+    if __name__ == '__main__':
+      print(main())
     ```
     # Результаты
-    ![](https://dvmn.org/filer/canonical/1610994077/769/)
+    ![](https://dvmn.org/media/Screenshot_from_2018-10-31_15-00-02.png)
