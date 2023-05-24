@@ -40,7 +40,7 @@ def main():
     href = args.link_for_bitly
     href_without_http = urlparse(href)._replace(scheme="").geturl()
 
-    request_header = {'Authorization': f'Bearer {os.environ["TOKEN_BITLY"]}'}
+    request_header = {'Authorization': f'Bearer {os.environ["BITLY_TOKEN"]}'}
 
     url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks/summary'
     url_is_bitlink = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}'
