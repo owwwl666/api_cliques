@@ -38,7 +38,8 @@ def main():
     args = parser.parse_args()
 
     href = args.link_for_bitly
-    href_without_http = urlparse(href)._replace(scheme="").geturl()
+    url_parse = urlparse(href)
+    href_without_http = url_parse.netloc + url_parse.path
 
     request_header = {'Authorization': f'Bearer {os.environ["BITLY_TOKEN"]}'}
 
