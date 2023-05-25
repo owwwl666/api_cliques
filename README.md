@@ -43,47 +43,49 @@
  - Объявление функций для реализации логики скрипта.
  
     ```python
-    def shorten_link(token, href):
+    def shorten_link(request_header, href):
     """Сокращение ссылки"""
       ...
     ```
     ```python
-    def count_clicks(url_count_clincks, token):
+    def count_clicks(url_count_clincks, request_header):
     """Количество кликов по ссылке"""
       ...
     ```
     ```python
-    def is_bitlink(url_is_bitlink, token):
-     """Проверка ссылки на сокращенность"""
+   def is_bitlink(url_is_bitlink, request_header):
+    """Проверка ссылки на сокращенность"""
       ...
     ```
     ```python
     def main():
-      load_dotenv()
+        load_dotenv()
 
-      parser = argparse.ArgumentParser()
-      parser.add_argument('link_for_bitly')
-      args = parser.parse_args()
+        parser = argparse.ArgumentParser()
+        parser.add_argument('link_for_bitly')
+        args = parser.parse_args()
 
-      href = args.link_for_bitly
-      href_without_http = urlparse(href)._replace(scheme="").geturl()
+        href = args.link_for_bitly
+        url_parse = urlparse(href)
+        href_without_http = f'{url_parse.netloc}{url_parse.path}'
 
-      request_header = {'Authorization': f'Bearer {os.environ["TOKEN_BITLY"]}'}
+        request_header = {'Authorization': f'Bearer {os.environ["BITLY_TOKEN"]}'}
 
-      url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks/summary'
-      url_is_bitlink = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}'
+        url_count_clincks = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}/clicks/summary'
+        url_is_bitlink = f'https://api-ssl.bitly.com/v4/bitlinks/{href_without_http}'
 
-      if is_bitlink(url_is_bitlink, request_header):
-          clicks_count = count_clicks(url_count_clincks, request_header)
-          return f'Количетво кликов: {clicks_count}'
-      try:
-          bitlink = shorten_link(request_header, href)
-          return f'Битлинк: {bitlink}'
-      except requests.exceptions.HTTPError:
-          raise 'Некорректная ссылка'
-          
+        if is_bitlink(url_is_bitlink, request_header):
+            clicks_count = count_clicks(url_count_clincks, request_header)
+            return f'Количетво кликов: {clicks_count}'
+        try:
+            bitlink = shorten_link(request_header, href)
+            return f'Битлинк: {bitlink}'
+        except requests.exceptions.HTTPError:
+            raise 'Некорректная ссылка'
+
+
     if __name__ == '__main__':
-      print(main())
+        print(main())
     ```
     # Результаты
     ![](https://dvmn.org/media/Screenshot_from_2018-10-31_15-00-02.png)
