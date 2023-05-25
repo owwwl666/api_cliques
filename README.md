@@ -5,14 +5,13 @@
 # Установка зависимостей
 
 Необходимые пакеты и их версии указаны в `requirements.txt`.
-- Установка requests:
-    `python -m pip install requests`
-- Установка python-dotenv:
-    `python -m pip install python-dotenv`
+Установка всех необходимых зависимостей:
+
+`pip install -r requirements.txt`
     
 # Требования к окружению
 
-- Операционная система: `Linux`
+Операционная система `Linux`
 
 # Настройка окружения
 
